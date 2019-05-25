@@ -1,6 +1,8 @@
 using System;
 using System.Globalization;
-using Prism.Properties;
+using System.Threading.Tasks;
+using Resources = Prism.Properties.Resources;
+
 
 namespace Prism.Events
 {
@@ -34,7 +36,12 @@ namespace Prism.Events
         /// <value>An <see cref="System.Action"/> or <see langword="null" /> if the referenced target is not alive.</value>
         public Action Action
         {
-            get { return (Action)_actionReference.Target; }
+            get { return (Action) _actionReference.Target; }
+        }
+
+        public Delegate Delegate
+        {
+            get { return _actionReference.Target; }
         }
 
         /// <summary>
@@ -56,7 +63,7 @@ namespace Prism.Events
         /// <see cref="Delegate">delegates</see>. As long as the returned delegate is not garbage collected,
         /// the <see cref="Action"/> references delegates won't get collected either.
         /// </remarks>
-        public virtual Action<object[]> GetExecutionStrategy()
+        public virtual Func<object[], Task> GetExecutionStrategy()
         {
             Action action = this.Action;
             if (action != null)
@@ -64,8 +71,10 @@ namespace Prism.Events
                 return arguments =>
                 {
                     InvokeAction(action);
+                    return AsyncHelpers.Return();
                 };
             }
+
             return null;
         }
 
@@ -122,7 +131,12 @@ namespace Prism.Events
         /// <value>An <see cref="System.Action{T}"/> or <see langword="null" /> if the referenced target is not alive.</value>
         public Action<TPayload> Action
         {
-            get { return (Action<TPayload>)_actionReference.Target; }
+            get { return (Action<TPayload>) _actionReference.Target; }
+        }
+
+        public Delegate Delegate
+        {
+            get { return _actionReference.Target; }
         }
 
         /// <summary>
@@ -131,7 +145,7 @@ namespace Prism.Events
         /// <value>An <see cref="Predicate{T}"/> or <see langword="null" /> if the referenced target is not alive.</value>
         public Predicate<TPayload> Filter
         {
-            get { return (Predicate<TPayload>)_filterReference.Target; }
+            get { return (Predicate<TPayload>) _filterReference.Target; }
         }
 
         /// <summary>
@@ -153,7 +167,7 @@ namespace Prism.Events
         /// <see cref="Delegate">delegates</see>. As long as the returned delegate is not garbage collected,
         /// the <see cref="Action"/> and <see cref="Filter"/> references delegates won't get collected either.
         /// </remarks>
-        public virtual Action<object[]> GetExecutionStrategy()
+        public virtual Func<object[], Task> GetExecutionStrategy()
         {
             Action<TPayload> action = this.Action;
             Predicate<TPayload> filter = this.Filter;
@@ -164,14 +178,18 @@ namespace Prism.Events
                     TPayload argument = default(TPayload);
                     if (arguments != null && arguments.Length > 0 && arguments[0] != null)
                     {
-                        argument = (TPayload)arguments[0];
+                        argument = (TPayload) arguments[0];
                     }
+
                     if (filter(argument))
                     {
                         InvokeAction(action, argument);
                     }
+
+                    return AsyncHelpers.Return();
                 };
             }
+
             return null;
         }
 

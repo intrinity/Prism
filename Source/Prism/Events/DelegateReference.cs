@@ -66,11 +66,13 @@ namespace Prism.Events
             {
                 return _method.CreateDelegate(_delegateType, null);
             }
+
             object target = _weakReference.Target;
             if (target != null)
             {
                 return _method.CreateDelegate(_delegateType, target);
             }
+
             return null;
         }
     }

@@ -1,5 +1,3 @@
-
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -12,6 +10,7 @@ namespace Prism.Events
     public class EventAggregator : IEventAggregator
     {
         private readonly Dictionary<Type, EventBase> events = new Dictionary<Type, EventBase>();
+
         // Captures the sync context for the UI thread when constructed on the UI thread 
         // in a platform agnositc way so it can be used for UI thread dispatching
         private readonly SynchronizationContext syncContext = SynchronizationContext.Current;
@@ -38,7 +37,7 @@ namespace Prism.Events
                 }
                 else
                 {
-                    return (TEventType)existingEvent;
+                    return (TEventType) existingEvent;
                 }
             }
         }

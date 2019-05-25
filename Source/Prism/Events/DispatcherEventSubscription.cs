@@ -65,7 +65,7 @@ namespace Prism.Events
         /// <param name="argument">The payload to pass <paramref name="action"/> while invoking it.</param>
         public override void InvokeAction(Action<TPayload> action, TPayload argument)
         {
-            syncContext.Post((o) => action((TPayload)o), argument);
+            syncContext.Post((o) => action((TPayload) o), argument);
         }
     }
 }

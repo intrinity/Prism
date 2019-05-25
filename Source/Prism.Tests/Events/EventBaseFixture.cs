@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Xunit;
 using Prism.Events;
 
@@ -97,6 +98,12 @@ namespace Prism.Tests.Events
         {
             public Action<object[]> GetPublishActionReturnValue;
             public bool GetPublishActionCalled;
+
+            public Delegate Delegate { get; }
+            Func<object[], Task> IEventSubscription.GetExecutionStrategy()
+            {
+                return null;
+            }
 
             public Action<object[]> GetExecutionStrategy()
             {

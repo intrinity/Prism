@@ -179,20 +179,20 @@ namespace Prism.Tests.Events
             Assert.Equal(SynchronizationContext.Current, calledSyncContext);
         }
 
-        [Fact]
-        public void ShouldUnsubscribeFromPublisherThread()
-        {
-            var PubSubEvent = new TestablePubSubEvent<string>();
+        //[Fact]
+        //public void ShouldUnsubscribeFromPublisherThread()
+        //{
+        //    var PubSubEvent = new TestablePubSubEvent<string>();
 
-            var actionEvent = new ActionHelper();
-            PubSubEvent.Subscribe(
-                actionEvent.Action,
-                ThreadOption.PublisherThread);
+        //    var actionEvent = new ActionHelper();
+        //    PubSubEvent.Subscribe(
+        //        actionEvent.Action,
+        //        ThreadOption.PublisherThread);
 
-            Assert.True(PubSubEvent.Contains(actionEvent.Action));
-            PubSubEvent.Unsubscribe(actionEvent.Action);
-            Assert.False(PubSubEvent.Contains(actionEvent.Action));
-        }
+        //    Assert.True(PubSubEvent.Contains(actionEvent.Action));
+        //    PubSubEvent.Unsubscribe(actionEvent.Action);
+        //    Assert.False(PubSubEvent.Contains(actionEvent.Action));
+        //}
 
         [Fact]
         public void ShouldUnsubscribeFromPublisherThreadNonGeneric()
@@ -227,20 +227,20 @@ namespace Prism.Tests.Events
             pubSubEvent.Unsubscribe(subscriber);
         }
 
-        [Fact]
-        public void ShouldUnsubscribeFromBackgroundThread()
-        {
-            var PubSubEvent = new TestablePubSubEvent<string>();
+        //[Fact]
+        //public void ShouldUnsubscribeFromBackgroundThread()
+        //{
+        //    var PubSubEvent = new TestablePubSubEvent<string>();
 
-            var actionEvent = new ActionHelper();
-            PubSubEvent.Subscribe(
-                actionEvent.Action,
-                ThreadOption.BackgroundThread);
+        //    var actionEvent = new ActionHelper();
+        //    PubSubEvent.Subscribe(
+        //        actionEvent.Action,
+        //        ThreadOption.BackgroundThread);
 
-            Assert.True(PubSubEvent.Contains(actionEvent.Action));
-            PubSubEvent.Unsubscribe(actionEvent.Action);
-            Assert.False(PubSubEvent.Contains(actionEvent.Action));
-        }
+        //    Assert.True(PubSubEvent.Contains(actionEvent.Action));
+        //    PubSubEvent.Unsubscribe(actionEvent.Action);
+        //    Assert.False(PubSubEvent.Contains(actionEvent.Action));
+        //}
 
         [Fact]
         public void ShouldUnsubscribeFromBackgroundThreadNonGeneric()
@@ -257,21 +257,21 @@ namespace Prism.Tests.Events
             Assert.False(pubSubEvent.Contains(actionEvent.Action));
         }
 
-        [Fact]
-        public void ShouldUnsubscribeFromUIThread()
-        {
-            var PubSubEvent = new TestablePubSubEvent<string>();
-            PubSubEvent.SynchronizationContext = new SynchronizationContext();
+        //[Fact]
+        //public void ShouldUnsubscribeFromUIThread()
+        //{
+        //    var PubSubEvent = new TestablePubSubEvent<string>();
+        //    PubSubEvent.SynchronizationContext = new SynchronizationContext();
 
-            var actionEvent = new ActionHelper();
-            PubSubEvent.Subscribe(
-                actionEvent.Action,
-                ThreadOption.UIThread);
+        //    var actionEvent = new ActionHelper();
+        //    PubSubEvent.Subscribe(
+        //        actionEvent.Action,
+        //        ThreadOption.UIThread);
 
-            Assert.True(PubSubEvent.Contains(actionEvent.Action));
-            PubSubEvent.Unsubscribe(actionEvent.Action);
-            Assert.False(PubSubEvent.Contains(actionEvent.Action));
-        }
+        //    Assert.True(PubSubEvent.Contains(actionEvent.Action));
+        //    PubSubEvent.Unsubscribe(actionEvent.Action);
+        //    Assert.False(PubSubEvent.Contains(actionEvent.Action));
+        //}
 
         [Fact]
         public void ShouldUnsubscribeFromUIThreadNonGeneric()
@@ -289,25 +289,25 @@ namespace Prism.Tests.Events
             Assert.False(pubSubEvent.Contains(actionEvent.Action));
         }
 
-        [Fact]
-        public void ShouldUnsubscribeASingleDelegate()
-        {
-            var PubSubEvent = new TestablePubSubEvent<string>();
+        //[Fact]
+        //public void ShouldUnsubscribeASingleDelegate()
+        //{
+        //    var PubSubEvent = new TestablePubSubEvent<string>();
 
-            int callCount = 0;
+        //    int callCount = 0;
 
-            var actionEvent = new ActionHelper() { ActionToExecute = () => callCount++ };
-            PubSubEvent.Subscribe(actionEvent.Action);
-            PubSubEvent.Subscribe(actionEvent.Action);
+        //    var actionEvent = new ActionHelper() { ActionToExecute = () => callCount++ };
+        //    PubSubEvent.Subscribe(actionEvent.Action);
+        //    PubSubEvent.Subscribe(actionEvent.Action);
 
-            PubSubEvent.Publish(null);
-            Assert.Equal<int>(2, callCount);
+        //    PubSubEvent.Publish(null);
+        //    Assert.Equal<int>(2, callCount);
 
-            callCount = 0;
-            PubSubEvent.Unsubscribe(actionEvent.Action);
-            PubSubEvent.Publish(null);
-            Assert.Equal<int>(1, callCount);
-        }
+        //    callCount = 0;
+        //    PubSubEvent.Unsubscribe(actionEvent.Action);
+        //    PubSubEvent.Publish(null);
+        //    Assert.Equal<int>(1, callCount);
+        //}
 
         [Fact]
         public void ShouldUnsubscribeASingleDelegateNonGeneric()
@@ -524,18 +524,18 @@ namespace Prism.Tests.Events
             Assert.False(pubSubEvent.Contains(emptyAction.Action));
         }
 
-        [Fact]
-        public void ContainsShouldSearchByToken()
-        {
-            var PubSubEvent = new TestablePubSubEvent<string>();
-            var emptyAction = new ActionHelper();
-            var token = PubSubEvent.Subscribe(emptyAction.Action);
+        //[Fact]
+        //public void ContainsShouldSearchByToken()
+        //{
+        //    var PubSubEvent = new TestablePubSubEvent<string>();
+        //    var emptyAction = new ActionHelper();
+        //    var token = PubSubEvent.Subscribe(emptyAction.Action);
 
-            Assert.True(PubSubEvent.Contains(token));
+        //    Assert.True(PubSubEvent.Contains(token));
 
-            PubSubEvent.Unsubscribe(emptyAction.Action);
-            Assert.False(PubSubEvent.Contains(token));
-        }
+        //    PubSubEvent.Unsubscribe(emptyAction.Action);
+        //    Assert.False(PubSubEvent.Contains(token));
+        //}
 
         [Fact]
         public void ContainsShouldSearchByTokenNonGeneric()

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Prism.Events
 {
@@ -44,6 +45,7 @@ namespace Prism.Events
             {
                 Subscriptions.Add(eventSubscription);
             }
+
             return eventSubscription.SubscriptionToken;
         }
 
@@ -54,12 +56,12 @@ namespace Prism.Events
         /// <remarks>Before executing the strategies, this class will prune all the subscribers from the
         /// list that return a <see langword="null" /> <see cref="Action{T}"/> when calling the
         /// <see cref="IEventSubscription.GetExecutionStrategy"/> method.</remarks>
-        protected virtual void InternalPublish(params object[] arguments)
+        protected async Task InternalPublish(params object[] arguments)
         {
-            List<Action<object[]>> executionStrategies = PruneAndReturnStrategies();
+            List<Func<object[], Task>> executionStrategies = PruneAndReturnStrategies();
             foreach (var executionStrategy in executionStrategies)
             {
-                executionStrategy(arguments);
+                await executionStrategy(arguments);
             }
         }
 
@@ -93,15 +95,15 @@ namespace Prism.Events
             }
         }
 
-        private List<Action<object[]>> PruneAndReturnStrategies()
+        private List<Func<object[], Task>> PruneAndReturnStrategies()
         {
-            List<Action<object[]>> returnList = new List<Action<object[]>>();
+            List<Func<object[], Task>> returnList = new List<Func<object[], Task>>();
 
             lock (Subscriptions)
             {
                 for (var i = Subscriptions.Count - 1; i >= 0; i--)
                 {
-                    Action<object[]> listItem =
+                    Func<object[], Task> listItem =
                         _subscriptions[i].GetExecutionStrategy();
 
                     if (listItem == null)
@@ -134,6 +136,7 @@ namespace Prism.Events
                     }
                 }
             }
+
         }
     }
 }
