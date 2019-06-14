@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using Prism.AppModel;
+using Prism.Mvvm;
 using Prism.Navigation;
 using System;
 using System.Collections.Generic;
@@ -156,7 +157,7 @@ namespace Prism.Common
             await InvokeViewAndViewModelActionAsync<IInitializeAsync>(page, async v => await v.InitializeAsync(parameters));
         }
 
-        private static void Abracadabra(object page, INavigationParameters parameters)
+        internal static void Abracadabra(object page, IEnumerable<KeyValuePair<string, object>> parameters)
         {
             var props = page.GetType()
                             .GetProperties(BindingFlags.Instance | BindingFlags.Public)
@@ -173,19 +174,19 @@ namespace Prism.Common
                     continue;
                 }
 
-                prop.SetValue(page, parameters[key]);
+                prop.SetValue(page, parameters.GetValue(key, prop.PropertyType));
             }
         }
 
-        private static bool HasKey(this INavigationParameters parameters, string name, out string key)
+        private static bool HasKey(this IEnumerable<KeyValuePair<string, object>> parameters, string name, out string key)
         {
-            key = parameters.Keys.FirstOrDefault(k => k.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+            key = parameters.Select(x => x.Key).FirstOrDefault(k => k.Equals(name, StringComparison.InvariantCultureIgnoreCase));
             return !string.IsNullOrEmpty(key);
         }
 
         private static (string Name, bool IsRequired) GetAutoInitializeProperty(this PropertyInfo pi)
         {
-            var attr = pi.GetCustomAttribute<NavigationParameterAttribute>();
+            var attr = pi.GetCustomAttribute<AutoInitializeAttribute>();
             if(attr is null)
             {
                 return (pi.Name, false);
@@ -292,20 +293,26 @@ namespace Prism.Common
             return page?.Parent != null && page?.Parent is NavigationPage;
         }
 
-        internal static bool HasNavigationPageParent(Page page)
+        internal static bool HasNavigationPageParent(Page page) =>
+            HasNavigationPageParent(page, out var _);
+
+        internal static bool HasNavigationPageParent(Page page, out NavigationPage navigationPage)
         {
             if (page?.Parent != null)
             {
-                if (page.Parent is NavigationPage)
+                if (page.Parent is NavigationPage navParent)
                 {
+                    navigationPage = navParent;
                     return true;
                 }
-                else if (page.Parent is TabbedPage || page.Parent is CarouselPage)
+                else if ((page.Parent is TabbedPage || page.Parent is CarouselPage) && page.Parent?.Parent is NavigationPage navigationParent)
                 {
-                    return page.Parent.Parent != null && page.Parent.Parent is NavigationPage;
+                    navigationPage = navigationParent;
+                    return true;
                 }
             }
 
+            navigationPage = null;
             return false;
         }
 
